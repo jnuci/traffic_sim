@@ -1,0 +1,19 @@
+venv/
+*.pyc
+controller/build/
+/cmake-build-*/
+/controller/CMakeCache.txt
+
+
+# commonly generated outputs
+*.o
+*.so
+*.dll
+*.obj
+*.app
+*.exe
+
+# IDE stuff
+.vscode/
+*.swp
+*.swo
