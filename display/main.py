@@ -5,7 +5,7 @@ PORT = 5000
 
 if __name__=="__main__":
     client = NetworkClient(HOST, PORT)
-    client.connect(delay = 1, attempts = 3)
+    client.connect(delay = 1)
 
     print("Running main entry function")
 

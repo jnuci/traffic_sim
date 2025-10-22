@@ -13,20 +13,26 @@ class NetworkClient:
         self.socket = None
         self.receive_buffer_size = 4096
 
-    def connect(self, delay = 1, attempts = 3):
+    def connect(self, delay = 1):
         # create socket for client to connect on
         # using ipv4 and TCP connection
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        for attempt in range(attempts):
+        attempts = 1
+        while(True):
             try:
                 self.socket.connect((self.host, self.port))
                 print(f"Connected to server on port {self.port}")
                 break
             except Exception as e:
-                print(f"Attempt {attempt+1} to connect failed: {e}")
-                if attempt < attempts-1:
-                    time.sleep(delay)            
+                print(f"Attempt {attempts} to connect failed: {e}")
+                if attempts < 100:
+                    time.sleep(delay)
+                else:
+                    print(f"Failed to establish server connection on port {self.port}")
+                    break
+
+            attempts += 1            
     
     def is_connected(self):
 
