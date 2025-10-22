@@ -7,58 +7,65 @@ void handle_client(boost::asio::ip::tcp::socket socket)
     try
     {
         // set butter of size 1024 to receive data
-        // init memory to all 0s
-        char data[1024];
-        while(true)
+        // char data[1024];
+        // while(true)
+        for(int i; i < 1; ++i)
         {
-            std::memset(data, 0, sizeof(data));
-            boost::system::error_code error;
+            // init memory to all 0s
+            // std::memset(data, 0, sizeof(data));
+            // boost::system::error_code error;
     
             // read from the block of memory, returns 0 if error
-            boost::asio::streambuf buffer;
-            boost::asio::read_until(socket, buffer, '\n', error);
+            // boost::asio::streambuf buffer;
+            // boost::asio::read_until(socket, buffer, '\n', error);
             // size_t length = socket.read_some(boost::asio::buffer(data), error);
     
-            if(error == boost::asio::error::eof)
-            {
-                std::cout << "client disconnected.\n";
-                break;
-            }
-            else if(error)
-            {
-                throw boost::system::system_error(error);
-            }
+            // if(error == boost::asio::error::eof)
+            // {
+            //     std::cout << "client disconnected.\n";
+            //     break;
+            // }
+            // else if(error)
+            // {
+            //     throw boost::system::system_error(error);
+            // }
 
-            std::istream is(&buffer);
-            std::string json_str;
-            std::getline(is, json_str); 
+            // std::istream is(&buffer);
+            // std::string json_str;
+            // std::getline(is, json_str); 
             
-            if(json_str.empty())
-                continue;
+            // if(json_str.empty())
+            //     continue;
 
             // parse request
             // expects json data
-            boost::json::value request = boost::json::parse(data);
+            // boost::json::value request = boost::json::parse(data);
             
             // I wonder why it has to be C-string
-            std::string command = request.as_object()["command"].as_string().c_str();
+            // std::string command = request.as_object()["command"].as_string().c_str();
 
-            // logic to handle the data
+            // init json object
             boost::json::object response;
-            if(!command.empty())
-            {
-                boost::json::object entity;
-                entity["id"] = 1;
-                boost::json::array positionArray({0, 0});
-                boost::json::array velocityArray({1, -1});
-                entity["position"] = positionArray;
-                entity["velocity"] = velocityArray;
-                response["entity"] = entity;
-            }
-            else
-            {
-                response["error"] = "Not sure what's going on here.";
-            }
+            response["message_type"] = "new_entity";
+
+            // message type
+            boost::json::object entity;
+            entity["id"] = 1;
+            // nest entity into response
+            response["entity"] = entity;
+            
+            // populate position and velocity arrays
+            boost::json::array positionArray;
+            positionArray.push_back(0);
+            positionArray.push_back(0);
+            boost::json::array velocityArray;
+            velocityArray.push_back(1);
+            velocityArray.push_back(-1);
+            
+            // nest position and velocity into entity
+            entity["position"] = positionArray;
+            entity["velocity"] = velocityArray;
+            
 
             std::string response_str = boost::json::serialize(response) + '\n';
             std::cout << "Serialized response: " << response_str << std::endl;
@@ -76,6 +83,7 @@ int main()
 {
     try
     {
+        // init io context for server (idk boost things)
         boost::asio::io_context io_context;
         
         // accept connections on default IP, port 5000
